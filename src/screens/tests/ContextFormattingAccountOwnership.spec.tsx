@@ -7,11 +7,9 @@ import {
   conversationNote,
   poorlyFormattedContext,
   clearlyStructuredContext,
-  contextAnnotations,
-  keyLessons,
-  takeaway,
+  explanationCopy,
+  solutionIntro,
   userQuestion,
-  whatChanged,
 } from '../contextFormattingContent'
 import { formatUsdChat } from '../../lib/money'
 
@@ -64,28 +62,13 @@ describe('ContextFormattingAccountOwnership', () => {
     expect(screen.getByText('Correct account scope')).toBeInTheDocument()
   })
 
-  it('links highlighted context lines to visible explanations', () => {
+  it('keeps the explanation brief', () => {
     render(<ContextFormattingAccountOwnership />)
 
-    for (const annotation of contextAnnotations) {
-      expect(screen.getByText(annotation.title)).toBeInTheDocument()
-      expect(screen.getByText(annotation.why)).toBeInTheDocument()
-    }
-    for (const change of whatChanged) {
-      expect(screen.getByText(change.text)).toBeInTheDocument()
-    }
-    expect(
-      screen.getByRole('heading', { name: /what alex asked for/i }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: /what the assistant used/i }),
-    ).toBeInTheDocument()
-    expect(screen.getByText(/^Takeaway:/).parentElement).toHaveTextContent(
-      takeaway,
-    )
-    for (const lesson of keyLessons) {
-      expect(screen.getByText(lesson)).toBeInTheDocument()
-    }
+    expect(screen.getByText(explanationCopy)).toBeInTheDocument()
+    expect(screen.getByText(solutionIntro)).toBeInTheDocument()
+    expect(screen.queryByText(/takeaway:/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/implementation note:/i)).not.toBeInTheDocument()
   })
 
 
