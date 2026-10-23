@@ -6,7 +6,10 @@ import {
   conversationNote,
   expectedResponse,
   explanationCopy,
+  formatOptionsIntro,
   improvementSteps,
+  jsonFormatOption,
+  jsonStructuredContext,
   otherDomainExamples,
   otherDomainsIntro,
   poorlyFormattedContext,
@@ -14,7 +17,9 @@ import {
   problemLabel,
   screenMeta,
   solutionIntro,
+  textFormatOption,
   workedExampleLabel,
+  type FormatOption,
 } from './contextFormattingContent'
 
 function ExplanationPanel() {
@@ -48,6 +53,24 @@ function ExplanationPanel() {
   )
 }
 
+function FormatOptionColumn({
+  option,
+  codeLabel,
+  code,
+}: {
+  option: FormatOption
+  codeLabel: string
+  code: string
+}) {
+  return (
+    <div className="min-w-0">
+      <h4 className="font-semibold text-amber-800">{option.label}</h4>
+      <p className="mt-1">{option.bestFor}</p>
+      <ContextCodeBlock label={codeLabel} code={code} className="mt-4 block" />
+    </div>
+  )
+}
+
 function SolutionPanel() {
   return (
     <div className="space-y-10">
@@ -68,20 +91,27 @@ function SolutionPanel() {
       </div>
       <div>
         <h3 className="font-semibold text-stone-900">{workedExampleLabel}</h3>
-        <div className="mt-4 grid gap-10 lg:grid-cols-2 lg:gap-12">
-          <ContextCodeBlock
-            label="Clearly structured context"
+        <p className="mt-1 max-w-3xl">{formatOptionsIntro}</p>
+        <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-12">
+          <FormatOptionColumn
+            option={textFormatOption}
+            codeLabel="Labeled text context"
             code={clearlyStructuredContext}
           />
-          <figure className="min-w-0 self-start">
-            <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-              Expected response
-            </figcaption>
-            <div className="mt-3">
-              <MessageBubble message={expectedResponse} />
-            </div>
-          </figure>
+          <FormatOptionColumn
+            option={jsonFormatOption}
+            codeLabel="JSON context"
+            code={jsonStructuredContext}
+          />
         </div>
+        <figure className="mt-10 max-w-xl">
+          <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+            Expected response
+          </figcaption>
+          <div className="mt-3">
+            <MessageBubble message={expectedResponse} />
+          </div>
+        </figure>
       </div>
     </div>
   )

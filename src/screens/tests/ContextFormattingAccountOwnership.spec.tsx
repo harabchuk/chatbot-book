@@ -7,7 +7,11 @@ import {
   poorlyFormattedContext,
   clearlyStructuredContext,
   explanationCopy,
+  formatOptionsIntro,
   improvementSteps,
+  jsonFormatOption,
+  jsonStructuredContext,
+  textFormatOption,
   otherDomainExamples,
   otherDomainsIntro,
   solutionIntro,
@@ -53,7 +57,7 @@ describe('ContextFormattingAccountOwnership', () => {
         name: /make ownership and scope explicit/i,
       }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Clearly structured context')).toBeInTheDocument()
+    expect(screen.getByText('Labeled text context')).toBeInTheDocument()
     expect(screen.getByText('Expected response')).toBeInTheDocument()
     expect(
       screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === clearlyStructuredContext),
@@ -105,5 +109,38 @@ describe('ContextFormattingAccountOwnership', () => {
       steps[steps.length - 1].compareDocumentPosition(workedExample) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy()
+  })
+
+  it('offers JSON as an alternative to the labeled text format', () => {
+    render(<ContextFormattingAccountOwnership />)
+
+    expect(screen.getByText(formatOptionsIntro)).toBeInTheDocument()
+    for (const option of [textFormatOption, jsonFormatOption]) {
+      expect(screen.getByRole('heading', { name: option.label })).toBeInTheDocument()
+      expect(screen.getByText(option.bestFor)).toBeInTheDocument()
+    }
+    expect(screen.getByText('JSON context')).toBeInTheDocument()
+    expect(
+      screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === jsonStructuredContext),
+    ).toBeInTheDocument()
+  })
+
+  it('embeds valid JSON with the same balances as the text option', () => {
+    const json = jsonStructuredContext.slice(
+      jsonStructuredContext.indexOf('{'),
+      jsonStructuredContext.lastIndexOf('}') + 1,
+    )
+    const data = JSON.parse(json)
+
+    expect(data.accounts.map((account: { owner_user_id: string }) => account.owner_user_id)).toEqual([
+      'user_alex',
+      'user_jamie',
+    ])
+    expect(data.accounts[0].available_balance_usd).toBe(balancesUsdCents.alex / 100)
+    expect(data.accounts[1].available_balance_usd).toBe(balancesUsdCents.jamie / 100)
+    expect(data.household_summary.is_individual_account).toBe(false)
+    expect(data.household_summary.combined_available_balance_usd).toBe(
+      balancesUsdCents.household / 100,
+    )
   })
 })

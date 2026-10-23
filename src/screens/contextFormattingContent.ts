@@ -136,6 +136,26 @@ export const improvementSteps: readonly ImprovementStep[] = [
 
 export const workedExampleLabel = 'Worked example: the banking assistant'
 
+export const formatOptionsIntro =
+  'You can apply these steps with either of two formats. Both put the owner, a unique ID, and the scope on every record, so the model gets the same answer from each.'
+
+export type FormatOption = {
+  label: string
+  bestFor: string
+}
+
+export const textFormatOption: FormatOption = {
+  label: 'Option A: Labeled text',
+  bestFor:
+    'Best when context is build as plain text. Each record is a block of “field: value” lines.',
+}
+
+export const jsonFormatOption: FormatOption = {
+  label: 'Option B: JSON',
+  bestFor:
+    'Best when your app builds the context from an API or database. Each record is a JSON object, so field names stay attached to every value.',
+}
+
 export const clearlyStructuredContext = `You are a banking assistant.
 The authenticated user is Alex Morgan (user_alex).
 
@@ -158,4 +178,38 @@ HOUSEHOLD SUMMARY — NOT AN INDIVIDUAL ACCOUNT
 combined_available_balance_usd: ${formatUsdPlain(balancesUsdCents.household)}
 
 For “my” account, use the account owned by the authenticated user.
+Answer directly.`
+
+export const jsonStructuredContext = `You are a banking assistant.
+The authenticated user is Alex Morgan (user_alex).
+
+USER:
+${userQuestion}
+
+RETRIEVED DATA (JSON):
+{
+  "accounts": [
+    {
+      "account_id": "savings_alex_01",
+      "nickname": "Rainy Day",
+      "owner_user_id": "user_alex",
+      "owner_name": "Alex Morgan",
+      "available_balance_usd": ${formatUsdPlain(balancesUsdCents.alex)}
+    },
+    {
+      "account_id": "savings_jamie_01",
+      "nickname": "Rainy Day",
+      "owner_user_id": "user_jamie",
+      "owner_name": "Jamie Morgan",
+      "available_balance_usd": ${formatUsdPlain(balancesUsdCents.jamie)}
+    }
+  ],
+  "household_summary": {
+    "is_individual_account": false,
+    "included_account_ids": ["savings_alex_01", "savings_jamie_01"],
+    "combined_available_balance_usd": ${formatUsdPlain(balancesUsdCents.household)}
+  }
+}
+
+For “my” account, use the account whose owner_user_id is user_alex.
 Answer directly.`
