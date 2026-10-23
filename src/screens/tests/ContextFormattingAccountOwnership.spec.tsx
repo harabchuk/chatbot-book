@@ -7,8 +7,12 @@ import {
   poorlyFormattedContext,
   clearlyStructuredContext,
   explanationCopy,
+  improvementSteps,
+  otherDomainExamples,
+  otherDomainsIntro,
   solutionIntro,
   userQuestion,
+  workedExampleLabel,
 } from '../contextFormattingContent'
 import { formatUsdChat } from '../../lib/money'
 
@@ -69,5 +73,37 @@ describe('ContextFormattingAccountOwnership', () => {
     expect(screen.getByText(solutionIntro)).toBeInTheDocument()
     expect(screen.queryByText(/takeaway:/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/implementation note:/i)).not.toBeInTheDocument()
+  })
+
+  it('relates the failure to chatbots outside banking', () => {
+    render(<ContextFormattingAccountOwnership />)
+
+    expect(
+      screen.getByRole('heading', { name: /the same trap in other chatbots/i }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(otherDomainsIntro)).toBeInTheDocument()
+    for (const example of otherDomainExamples) {
+      expect(screen.getByText(`${example.domain}:`)).toBeInTheDocument()
+      expect(screen.getByText(example.scenario, { exact: false })).toBeInTheDocument()
+    }
+  })
+
+  it('lists domain-neutral improvement steps before the banking worked example', () => {
+    render(<ContextFormattingAccountOwnership />)
+
+    const steps = within(
+      screen.getByRole('list', { name: /improvement steps/i }),
+    ).getAllByRole('listitem')
+    expect(steps).toHaveLength(improvementSteps.length)
+    improvementSteps.forEach((step, index) => {
+      expect(steps[index]).toHaveTextContent(step.title)
+      expect(steps[index]).toHaveTextContent(step.detail)
+    })
+
+    const workedExample = screen.getByRole('heading', { name: workedExampleLabel })
+    expect(
+      steps[steps.length - 1].compareDocumentPosition(workedExample) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
   })
 })

@@ -6,11 +6,15 @@ import {
   conversationNote,
   expectedResponse,
   explanationCopy,
+  improvementSteps,
+  otherDomainExamples,
+  otherDomainsIntro,
   poorlyFormattedContext,
   primaryTranscript,
   problemLabel,
   screenMeta,
   solutionIntro,
+  workedExampleLabel,
 } from './contextFormattingContent'
 
 function ExplanationPanel() {
@@ -24,27 +28,60 @@ function ExplanationPanel() {
         label="Poorly formatted context"
         code={poorlyFormattedContext}
       />
+      <div>
+        <h3 className="font-semibold text-stone-900">
+          The same trap in other chatbots
+        </h3>
+        <p className="mt-1">{otherDomainsIntro}</p>
+        <ul className="mt-3 space-y-2">
+          {otherDomainExamples.map((example) => (
+            <li key={example.domain}>
+              <span className="font-semibold text-stone-900">
+                {example.domain}:
+              </span>{' '}
+              {example.scenario}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
 
 function SolutionPanel() {
   return (
-    <div className="space-y-6">
-      <p className="max-w-3xl">{solutionIntro}</p>
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-        <ContextCodeBlock
-          label="Clearly structured context"
-          code={clearlyStructuredContext}
-        />
-        <figure className="min-w-0 self-start">
-          <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-            Expected response
-          </figcaption>
-          <div className="mt-3">
-            <MessageBubble message={expectedResponse} />
-          </div>
-        </figure>
+    <div className="space-y-10">
+      <div className="max-w-3xl">
+        <p>{solutionIntro}</p>
+        <ol
+          aria-label="Improvement steps"
+          className="mt-4 list-decimal space-y-3 pl-5 marker:font-semibold marker:text-amber-600">
+          {improvementSteps.map((step) => (
+            <li key={step.title}>
+              <span className="font-semibold text-stone-900">
+                {step.title}.
+              </span>{' '}
+              {step.detail}
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <h3 className="font-semibold text-stone-900">{workedExampleLabel}</h3>
+        <div className="mt-4 grid gap-10 lg:grid-cols-2 lg:gap-12">
+          <ContextCodeBlock
+            label="Clearly structured context"
+            code={clearlyStructuredContext}
+          />
+          <figure className="min-w-0 self-start">
+            <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Expected response
+            </figcaption>
+            <div className="mt-3">
+              <MessageBubble message={expectedResponse} />
+            </div>
+          </figure>
+        </div>
       </div>
     </div>
   )

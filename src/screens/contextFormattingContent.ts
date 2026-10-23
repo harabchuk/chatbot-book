@@ -17,7 +17,7 @@ export const screenMeta = {
   category: 'Context formatting',
   title: 'Right numbers, wrong account',
   description:
-    'Poorly formatted context can make a chatbot confuse a household total with your personal balance.',
+    'Poorly formatted context can make a chatbot answer with someone else’s data. In this example, it reports a household total as your personal balance.',
 } as const
 
 export const userQuestion =
@@ -58,6 +58,27 @@ export const problemLabel =
 export const explanationCopy =
   'Two accounts share the same name, and the household total is labeled just “Available”. The model picks the total as Alex’s balance.'
 
+export const otherDomainsIntro =
+  'Banking is just one example. Any chatbot that answers questions about “my” data can fall into the same trap when the context mixes your records with other people’s records or with totals.'
+
+export type DomainExample = {
+  domain: string
+  scenario: string
+}
+
+export const otherDomainExamples: readonly DomainExample[] = [
+  {
+    domain: 'Medical app',
+    scenario:
+      'A parent manages family profiles and asks “When is my next appointment?” The context lists everyone’s visits under one “Patient / Date” heading, so the bot replies with their child’s check-up.',
+  },
+  {
+    domain: 'Parcel delivery',
+    scenario:
+      'Two parcels are going to the same “Home” address, one for the customer and one for a flatmate. Asked “Where is my parcel?”, the bot reports the flatmate’s parcel as delivered.',
+  },
+]
+
 export const poorlyFormattedContext = `You are a banking assistant.
 The authenticated user is Alex Morgan.
 
@@ -78,7 +99,42 @@ Available: ${formatUsdLabel(balancesUsdCents.household)}
 Answer directly.`
 
 export const solutionIntro =
-  'Label every balance with its owner, and mark the household total as a combined amount.'
+  'These steps work for any chatbot that looks up personal records, whether those are bank accounts, appointments, prescriptions, or parcels. The goal is the same everywhere: every record has a clear owner, and every summary has a clear scope.'
+
+export type ImprovementStep = {
+  title: string
+  detail: string
+}
+
+export const improvementSteps: readonly ImprovementStep[] = [
+  {
+    title: 'Put the owner next to every value',
+    detail:
+      'Don’t rely on a shared column heading. Each balance, appointment, or delivery status should carry its own owner field.',
+  },
+  {
+    title: 'Use unique IDs, not display names',
+    detail:
+      'Nicknames like “Rainy Day”, address labels like “Home”, or a doctor’s name can repeat. Stable IDs keep records apart.',
+  },
+  {
+    title: 'Label summaries as summaries',
+    detail:
+      'A household balance, a family appointment list, or “3 parcels on the way” is not one person’s record. Say what it includes and that it is a combined view.',
+  },
+  {
+    title: 'Define who “my” means',
+    detail:
+      'Tie “my” to the signed-in user’s ID, and tell the bot to ask a clarifying question when more than one record still matches.',
+  },
+  {
+    title: 'Filter before the model sees it',
+    detail:
+      'Where possible, select the user’s own records in application code and send only those. Clear formatting reduces mistakes but doesn’t eliminate them, and access control belongs in the app, not the prompt.',
+  },
+]
+
+export const workedExampleLabel = 'Worked example: the banking assistant'
 
 export const clearlyStructuredContext = `You are a banking assistant.
 The authenticated user is Alex Morgan (user_alex).
