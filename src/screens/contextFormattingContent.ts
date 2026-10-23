@@ -88,18 +88,48 @@ Available: ${formatUsdLabel(balancesUsdCents.household)}
 
 Answer directly.`
 
-export const contextAnnotations = [
+export type ContextAnnotation = {
+  marker: string
+  title: string
+  /** Exact context lines this annotation explains. */
+  lines: readonly string[]
+  why: string
+}
+
+export const contextAnnotations: readonly ContextAnnotation[] = [
   {
-    fragment: 'Account / Owner / Available and the two rows',
+    marker: '1',
+    title: 'Ownership depends on a shared heading',
+    lines: [
+      'Account / Owner / Available',
+      `Rainy Day / Alex Morgan / ${formatUsdLabel(balancesUsdCents.alex)}`,
+      `Rainy Day / Jamie Morgan / ${formatUsdLabel(balancesUsdCents.jamie)}`,
+    ],
     why: 'Each value depends on a shared positional heading. Ownership is present, but is not explicitly labeled beside each balance.',
   },
   {
-    fragment: 'Selected account: Rainy Day',
+    marker: '2',
+    title: 'The nickname is not unique',
+    lines: ['Selected account: Rainy Day'],
     why: 'Both accounts share this nickname. The selection does not identify one unique account.',
   },
   {
-    fragment: `Selected household member: All followed by Available: ${formatUsdLabel(balancesUsdCents.household)}`,
+    marker: '3',
+    title: 'The total is not labeled as combined',
+    lines: [
+      'Selected household member: All',
+      `Available: ${formatUsdLabel(balancesUsdCents.household)}`,
+    ],
     why: '“All” establishes household scope, but the amount is not explicitly labeled as a combined total across two accounts.',
+  },
+]
+
+export const arithmetic = [
+  { label: "Alex's account", amount: formatUsdChat(balancesUsdCents.alex) },
+  { label: "Jamie's account", amount: formatUsdChat(balancesUsdCents.jamie) },
+  {
+    label: 'Household total',
+    amount: formatUsdChat(balancesUsdCents.household),
   },
 ] as const
 
@@ -165,11 +195,58 @@ If multiple accounts still match, ask which account the user means.
 If no account matches, say that the requested balance could not be found.
 Answer directly.`
 
-export const whatChanged = [
-  'Each balance has a local label and an explicit account owner.',
-  'Stable user and account IDs distinguish records with identical nicknames.',
-  'The household total names its scope and identifies the accounts it includes.',
-  'The answer rules connect “my” to the authenticated user’s identity.',
+export type ContextChange = {
+  marker: string
+  text: string
+  /** Exact context lines that demonstrate this change. */
+  lines: readonly string[]
+}
+
+export const whatChanged: readonly ContextChange[] = [
+  {
+    marker: 'A',
+    text: 'Each balance has a local label and an explicit account owner.',
+    lines: [
+      'owner_name: Alex Morgan',
+      'owner_name: Jamie Morgan',
+      `available_balance_usd: ${formatUsdPlain(balancesUsdCents.alex)}`,
+      `available_balance_usd: ${formatUsdPlain(balancesUsdCents.jamie)}`,
+    ],
+  },
+  {
+    marker: 'B',
+    text: 'Stable user and account IDs distinguish records with identical nicknames.',
+    lines: [
+      'user_id: user_alex',
+      'account_id: savings_alex_01',
+      'account_id: savings_jamie_01',
+      'owner_user_id: user_alex',
+      'owner_user_id: user_jamie',
+    ],
+  },
+  {
+    marker: 'C',
+    text: 'The household total names its scope and identifies the accounts it includes.',
+    lines: [
+      'HOUSEHOLD SUMMARY — NOT AN INDIVIDUAL ACCOUNT',
+      'included_account_ids: [savings_alex_01, savings_jamie_01]',
+      `combined_available_balance_usd: ${formatUsdPlain(balancesUsdCents.household)}`,
+    ],
+  },
+  {
+    marker: 'D',
+    text: 'The answer rules connect “my” to the authenticated user’s identity.',
+    lines: [
+      'For “my” account, match owner_user_id to the authenticated user_id.',
+      'Do not use a household summary as an individual account balance.',
+    ],
+  },
+]
+
+export const keyLessons = [
+  'Accurate values can still produce a wrong answer when the context does not tie each value to its owner and scope.',
+  'Account nicknames are not unique identifiers.',
+  'A household total is not an individual account balance.',
 ] as const
 
 export const implementationNote =

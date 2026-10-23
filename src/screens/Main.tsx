@@ -22,18 +22,18 @@ const scenarios = [
 
 export default function Main() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-cream-50 text-stone-900">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <h1 className="text-3xl font-semibold tracking-tight">
           Chatbot Issues Simulator
         </h1>
-        <p className="mt-3 text-lg text-slate-600">
+        <p className="mt-3 text-lg text-stone-600">
           Explore how chatbot failures like missing context, bad retrieval, and
           API errors show up in a conversation.
         </p>
 
         <nav className="mt-10" aria-label="Issue scenarios">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-slate-500">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-amber-800">
             Scenarios
           </h2>
           <ul className="mt-3 space-y-2">
@@ -41,7 +41,7 @@ export default function Main() {
               <li key={to}>
                 <Link
                   to={to}
-                  className="text-lg text-slate-800 underline-offset-4 hover:underline"
+                  className="block rounded-xl border border-cream-200 bg-white px-4 py-3 text-lg text-stone-800 shadow-sm shadow-amber-900/5 outline-none hover:border-amber-300 hover:bg-amber-50 focus-visible:ring-2 focus-visible:ring-amber-500"
                 >
                   {label}
                 </Link>

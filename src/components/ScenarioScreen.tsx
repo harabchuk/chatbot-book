@@ -61,24 +61,24 @@ export default function ScenarioScreen({
   stepsToImproveTitle = 'Steps to improve',
 }: ScenarioScreenProps) {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-cream-50 text-stone-900">
       <div className="mx-auto max-w-6xl px-6 py-16">
         {category ? (
-          <p className="text-sm font-medium uppercase tracking-wide text-slate-500">
+          <p className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-900">
             {category}
           </p>
         ) : null}
         <h1
-          className={`text-3xl font-semibold tracking-tight ${category ? 'mt-2' : ''}`}
+          className={`text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl ${category ? 'mt-3' : ''}`}
         >
           {title}
         </h1>
-        <p className="mt-3 max-w-3xl text-lg text-slate-600">{description}</p>
+        <p className="mt-3 max-w-3xl text-lg text-stone-600">{description}</p>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:items-stretch">
-          <div className="flex min-h-0 flex-col gap-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:items-start">
+          <div className="flex min-h-0 flex-col gap-3 lg:sticky lg:top-6">
             {chatTitle ? (
-              <h2 className="text-sm font-semibold tracking-tight text-slate-900">
+              <h2 className="text-sm font-semibold tracking-tight text-stone-900">
                 {chatTitle}
               </h2>
             ) : null}

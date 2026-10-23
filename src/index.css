@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cream-50: #fffbf5;
+  --color-cream-100: #fbf3e6;
+  --color-cream-200: #f3e4cc;
+}
+
+@layer base {
+  body {
+    @apply bg-cream-50 text-stone-900 antialiased;
+  }
+}

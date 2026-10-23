@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import ChatWindow, { type ChatMessage } from '../ChatWindow'
+import ChatWindow, { MessageBubble, type ChatMessage } from '../ChatWindow'
 
 const sampleMessages: ChatMessage[] = [
   { id: '1', role: 'user', content: 'What is my order status?' },
@@ -119,4 +119,26 @@ describe('ChatWindow', () => {
   })
 })
 
+describe('MessageBubble', () => {
+  it('renders a standalone bot message with its annotation label', () => {
+    render(
+      <MessageBubble
+        message={{
+          id: 'expected',
+          role: 'bot',
+          content: 'You have $1,250.00 available.',
+          annotation: { label: 'Correct account scope', tone: 'correct' },
+        }}
+      />,
+    )
 
+    expect(screen.getByText('You have $1,250.00 available.')).toHaveAttribute(
+      'data-role',
+      'bot',
+    )
+    expect(screen.getByText('Correct account scope')).toHaveAttribute(
+      'data-annotation',
+      'correct',
+    )
+  })
+})

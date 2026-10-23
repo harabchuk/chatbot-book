@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import ContextFormattingAccountOwnership from '../ContextFormattingAccountOwnership'
@@ -7,7 +7,11 @@ import {
   conversationNote,
   poorlyFormattedContext,
   clearlyStructuredContext,
+  contextAnnotations,
+  keyLessons,
+  takeaway,
   userQuestion,
+  whatChanged,
 } from '../contextFormattingContent'
 import { formatUsdChat } from '../../lib/money'
 
@@ -24,7 +28,7 @@ describe('ContextFormattingAccountOwnership', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(/illustrative conversation/i)).toBeInTheDocument()
     expect(screen.getByText(/signed in as alex morgan/i)).toBeInTheDocument()
-    expect(screen.getByText(userQuestion)).toBeInTheDocument()
+    expect(within(screen.getByRole('log')).getByText(userQuestion)).toBeInTheDocument()
     expect(
       screen.getByText(
         `You have ${formatUsdChat(balancesUsdCents.household)} available in your Rainy Day savings account.`,
@@ -58,6 +62,30 @@ describe('ContextFormattingAccountOwnership', () => {
       ),
     ).toBeInTheDocument()
     expect(screen.getByText('Correct account scope')).toBeInTheDocument()
+  })
+
+  it('links highlighted context lines to visible explanations', () => {
+    render(<ContextFormattingAccountOwnership />)
+
+    for (const annotation of contextAnnotations) {
+      expect(screen.getByText(annotation.title)).toBeInTheDocument()
+      expect(screen.getByText(annotation.why)).toBeInTheDocument()
+    }
+    for (const change of whatChanged) {
+      expect(screen.getByText(change.text)).toBeInTheDocument()
+    }
+    expect(
+      screen.getByRole('heading', { name: /what alex asked for/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: /what the assistant used/i }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/^Takeaway:/).parentElement).toHaveTextContent(
+      takeaway,
+    )
+    for (const lesson of keyLessons) {
+      expect(screen.getByText(lesson)).toBeInTheDocument()
+    }
   })
 
 

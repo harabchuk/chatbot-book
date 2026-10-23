@@ -38,23 +38,29 @@ type ChatWindowProps = {
   className?: string
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+export function MessageBubble({ message }: { message: ChatMessage }) {
   const annotationClass =
     message.annotation?.tone === 'correct'
-      ? 'text-emerald-800'
-      : 'text-rose-800'
+      ? 'bg-emerald-50 text-emerald-800 ring-emerald-200'
+      : 'bg-rose-50 text-rose-800 ring-rose-200'
+  const bubbleToneClass =
+    message.annotation?.tone === 'correct'
+      ? 'ring-2 ring-emerald-300'
+      : message.annotation?.tone === 'incorrect'
+        ? 'ring-2 ring-rose-300'
+        : ''
 
   return (
     <div
-      className={`flex flex-col gap-1 ${
+      className={`flex flex-col gap-1.5 ${
         message.role === 'user' ? 'items-end' : 'items-start'
       }`}
     >
       <p
         className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
           message.role === 'user'
-            ? 'rounded-br-md bg-slate-800 text-white'
-            : 'rounded-bl-md bg-slate-100 text-slate-800'
+            ? 'rounded-br-md bg-amber-700 text-white'
+            : `rounded-bl-md bg-cream-100 text-stone-800 ${bubbleToneClass}`
         }`}
         data-role={message.role}
       >
@@ -62,7 +68,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
       </p>
       {message.annotation ? (
         <p
-          className={`max-w-[80%] text-xs font-semibold ${annotationClass}`}
+          className={`max-w-[80%] rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${annotationClass}`}
           data-annotation={message.annotation.tone}
         >
           {message.annotation.label}
@@ -108,18 +114,18 @@ export default function ChatWindow({
 
   return (
     <section
-      className={`flex h-[28rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ${className}`}
+      className={`flex h-[28rem] flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-sm shadow-amber-900/5 ${className}`}
       aria-label="Chat"
     >
       {(conversationLabel || identityLabel) && (
-        <header className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+        <header className="border-b border-cream-200 bg-cream-100/70 px-4 py-3">
           {conversationLabel ? (
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">
               {conversationLabel}
             </p>
           ) : null}
           {identityLabel ? (
-            <p className="mt-1 text-sm font-medium text-slate-800">
+            <p className="mt-1 text-sm font-medium text-stone-800">
               {identityLabel}
             </p>
           ) : null}
@@ -140,7 +146,7 @@ export default function ChatWindow({
           <div className="mt-1">
             <button
               type="button"
-              className="rounded-md text-left text-sm font-medium text-slate-700 underline-offset-2 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-slate-400"
+              className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-left text-sm font-medium text-amber-900 outline-none hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2"
               aria-expanded={continuationOpen}
               aria-controls={continuationId}
               onClick={() => setContinuationOpen((open) => !open)}
@@ -162,11 +168,15 @@ export default function ChatWindow({
           </div>
         ) : null}
 
-        {footer ? <div className="mt-1 text-sm text-slate-600">{footer}</div> : null}
+        {footer ? (
+          <div className="mt-1 rounded-xl border border-dashed border-amber-300 bg-amber-50/60 px-3 py-2 text-sm text-stone-700">
+            {footer}
+          </div>
+        ) : null}
       </div>
 
       <form
-        className="flex gap-2 border-t border-slate-200 bg-slate-50 px-3 py-3"
+        className="flex gap-2 border-t border-cream-200 bg-cream-100/70 px-3 py-3"
         onSubmit={handleSubmit}
       >
         <label className="sr-only" htmlFor={inputId}>
@@ -179,12 +189,12 @@ export default function ChatWindow({
           onChange={(event) => setDraft(event.target.value)}
           placeholder={placeholder}
           readOnly={!inputEnabled}
-          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 read-only:bg-slate-50 read-only:text-slate-500 focus:border-slate-400"
+          className="min-w-0 flex-1 rounded-xl border border-cream-200 bg-white px-3 py-2 text-sm text-stone-900 outline-none placeholder:text-stone-400 read-only:bg-cream-50 read-only:text-stone-500 focus:border-amber-400"
           autoComplete="off"
         />
         <button
           type="submit"
-          className="rounded-xl bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-xl bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-40"
           disabled={!inputEnabled || !draft.trim()}
         >
           Send
