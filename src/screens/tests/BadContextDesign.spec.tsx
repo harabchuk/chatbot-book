@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import BadContextDesign from '../BadContextDesign'
 
 describe('BadContextDesign', () => {
-  it('renders the scenario heading and chat illustration', () => {
+  it('renders chat, behind the scenes, and steps to improve', () => {
     render(<BadContextDesign />)
 
     expect(
@@ -13,5 +13,13 @@ describe('BadContextDesign', () => {
     expect(
       screen.getByText(/I don’t have prior conversation context/i),
     ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: /behind the scenes/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: /steps to improve/i }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/generic product knowledge/i)).toBeInTheDocument()
+    expect(screen.getByText(/carry forward decisions/i)).toBeInTheDocument()
   })
 })
