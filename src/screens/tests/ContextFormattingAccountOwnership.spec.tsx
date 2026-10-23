@@ -1,5 +1,4 @@
 import { render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import ContextFormattingAccountOwnership from '../ContextFormattingAccountOwnership'
 import {
@@ -70,33 +69,5 @@ describe('ContextFormattingAccountOwnership', () => {
     expect(screen.getByText(solutionIntro)).toBeInTheDocument()
     expect(screen.queryByText(/takeaway:/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/implementation note:/i)).not.toBeInTheDocument()
-  })
-
-
-  it('keeps the correction continuation collapsed until expanded', async () => {
-    const user = userEvent.setup()
-    render(<ContextFormattingAccountOwnership />)
-
-    const toggle = screen.getByRole('button', {
-      name: /show expected response with correct account scope/i,
-    })
-    expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    expect(
-      screen.queryByRole('region', {
-        name: /show expected response with correct account scope/i,
-      }),
-    ).not.toBeInTheDocument()
-
-    await user.click(toggle)
-
-    expect(toggle).toHaveAttribute('aria-expanded', 'true')
-    expect(
-      screen.getByRole('region', {
-        name: /show expected response with correct account scope/i,
-      }),
-    ).toBeInTheDocument()
-    expect(screen.getAllByText('Correct account scope').length).toBeGreaterThan(
-      1,
-    )
   })
 })

@@ -3,7 +3,6 @@ import ContextCodeBlock from '../components/ContextCodeBlock'
 import ScenarioScreen from '../components/ScenarioScreen'
 import {
   clearlyStructuredContext,
-  continuationMessages,
   conversationNote,
   expectedResponse,
   explanationCopy,
@@ -63,10 +62,6 @@ export default function ContextFormattingAccountOwnership() {
           messages={primaryTranscript}
           conversationLabel="Illustrative conversation"
           identityLabel="Signed in as Alex Morgan"
-          continuation={{
-            summary: 'Show expected response with correct account scope',
-            messages: continuationMessages,
-          }}
           footer={<p>{conversationNote}</p>}
         />
       }

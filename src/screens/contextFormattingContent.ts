@@ -40,18 +40,6 @@ export const primaryTranscript: ChatMessage[] = [
   },
 ]
 
-export const continuationMessages: ChatMessage[] = [
-  {
-    id: 'cf-bot-correct-continuation',
-    role: 'bot',
-    content: `You have ${formatUsdChat(balancesUsdCents.alex)} available in your Rainy Day savings account.`,
-    annotation: {
-      label: 'Correct account scope',
-      tone: 'correct',
-    },
-  },
-]
-
 export const expectedResponse: ChatMessage = {
   id: 'cf-bot-expected',
   role: 'bot',
