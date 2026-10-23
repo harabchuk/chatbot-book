@@ -36,12 +36,12 @@ export default function Main() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-amber-800">
             Scenarios
           </h2>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3 divide-y divide-cream-200 border-y border-cream-200">
             {scenarios.map(({ to, label }) => (
               <li key={to}>
                 <Link
                   to={to}
-                  className="block rounded-xl border border-cream-200 bg-white px-4 py-3 text-lg text-stone-800 shadow-sm shadow-amber-900/5 outline-none hover:border-amber-300 hover:bg-amber-50 focus-visible:ring-2 focus-visible:ring-amber-500"
+                  className="block py-3 text-lg text-stone-800 outline-none hover:text-amber-800 focus-visible:ring-2 focus-visible:ring-amber-500"
                 >
                   {label}
                 </Link>

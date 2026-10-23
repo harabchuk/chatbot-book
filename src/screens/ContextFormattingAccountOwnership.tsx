@@ -16,11 +16,9 @@ import {
 
 function ExplanationPanel() {
   return (
-    <div className="space-y-5">
-      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-        <p className="text-base font-semibold text-stone-900">
-          {problemLabel}
-        </p>
+    <div className="space-y-6">
+      <div>
+        <p className="font-semibold text-stone-900">{problemLabel}</p>
         <p className="mt-1">{explanationCopy}</p>
       </div>
       <ContextCodeBlock
@@ -33,16 +31,21 @@ function ExplanationPanel() {
 
 function SolutionPanel() {
   return (
-    <div className="space-y-5">
-      <p className="max-w-3xl text-base text-stone-700">{solutionIntro}</p>
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+    <div className="space-y-6">
+      <p className="max-w-3xl">{solutionIntro}</p>
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
         <ContextCodeBlock
           label="Clearly structured context"
           code={clearlyStructuredContext}
         />
-        <div className="self-start rounded-xl border border-cream-200 bg-white p-4">
-          <MessageBubble message={expectedResponse} />
-        </div>
+        <figure className="min-w-0 self-start">
+          <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+            Expected response
+          </figcaption>
+          <div className="mt-3">
+            <MessageBubble message={expectedResponse} />
+          </div>
+        </figure>
       </div>
     </div>
   )

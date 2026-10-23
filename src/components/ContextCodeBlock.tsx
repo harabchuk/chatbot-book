@@ -45,7 +45,7 @@ export default function ContextCodeBlock({
         {label}
       </figcaption>
       <pre
-        className="mt-2 max-w-full overflow-x-auto rounded-xl bg-cream-100 font-mono text-[0.8rem] leading-relaxed text-stone-800 ring-1 ring-cream-200 select-text"
+        className="mt-3 max-w-full overflow-x-auto rounded-xl bg-cream-100 font-mono text-[0.8rem] leading-relaxed text-stone-800 select-text"
         tabIndex={0}
       >
         <code className="grid w-max min-w-full py-3">

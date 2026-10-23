@@ -169,7 +169,7 @@ export default function ChatWindow({
         ) : null}
 
         {footer ? (
-          <div className="mt-1 rounded-xl border border-dashed border-amber-300 bg-amber-50/60 px-3 py-2 text-sm text-stone-700">
+          <div className="mt-2 text-sm italic text-stone-500">
             {footer}
           </div>
         ) : null}

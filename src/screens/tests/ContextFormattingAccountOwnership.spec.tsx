@@ -51,6 +51,7 @@ describe('ContextFormattingAccountOwnership', () => {
       }),
     ).toBeInTheDocument()
     expect(screen.getByText('Clearly structured context')).toBeInTheDocument()
+    expect(screen.getByText('Expected response')).toBeInTheDocument()
     expect(
       screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === clearlyStructuredContext),
     ).toBeInTheDocument()
