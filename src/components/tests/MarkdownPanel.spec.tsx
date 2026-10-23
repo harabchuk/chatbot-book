@@ -22,4 +22,20 @@ describe('MarkdownPanel', () => {
       screen.getByRole('region', { name: /behind the scenes/i }),
     ).toBeInTheDocument()
   })
+
+  it('renders children without markdown when only rich content is provided', () => {
+    render(
+      <MarkdownPanel title="What went wrong">
+        <p>Ownership is buried in compact headings.</p>
+      </MarkdownPanel>,
+    )
+
+    expect(
+      screen.getByRole('region', { name: /what went wrong/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/ownership is buried in compact headings/i),
+    ).toBeInTheDocument()
+  })
 })
+

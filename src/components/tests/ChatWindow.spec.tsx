@@ -60,4 +60,63 @@ describe('ChatWindow', () => {
     expect(screen.queryByText('Order #42')).not.toBeInTheDocument()
     expect(screen.getByLabelText(/message/i)).toHaveValue('')
   })
+
+  it('renders identity labels, annotations outside bubbles, and a collapsed continuation', async () => {
+    const user = userEvent.setup()
+    const annotated: ChatMessage[] = [
+      {
+        id: '1',
+        role: 'bot',
+        content: 'You have $10,950.00 available.',
+        annotation: { label: 'Incorrect account scope', tone: 'incorrect' },
+      },
+    ]
+
+    render(
+      <ChatWindow
+        messages={annotated}
+        conversationLabel="Illustrative conversation"
+        identityLabel="Signed in as Alex Morgan"
+        footer={<p>Household total note</p>}
+        continuation={{
+          summary: 'Show expected response',
+          messages: [
+            {
+              id: '2',
+              role: 'bot',
+              content: 'You have $1,250.00 available.',
+              annotation: { label: 'Correct account scope', tone: 'correct' },
+            },
+          ],
+        }}
+      />,
+    )
+
+    expect(screen.getByText(/illustrative conversation/i)).toBeInTheDocument()
+    expect(screen.getByText(/signed in as alex morgan/i)).toBeInTheDocument()
+    expect(screen.getByText(/incorrect account scope/i)).toHaveAttribute(
+      'data-annotation',
+      'incorrect',
+    )
+    expect(screen.getByText(/household total note/i)).toBeInTheDocument()
+
+    const toggle = screen.getByRole('button', {
+      name: /show expected response/i,
+    })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.queryByText(/you have \$1,250\.00 available/i),
+    ).not.toBeInTheDocument()
+
+    await user.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText(/you have \$1,250\.00 available/i)).toBeInTheDocument()
+    expect(screen.getByText('Correct account scope')).toHaveAttribute(
+      'data-annotation',
+      'correct',
+    )
+  })
 })
+
+

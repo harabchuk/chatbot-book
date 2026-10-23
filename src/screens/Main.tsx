@@ -1,9 +1,14 @@
 import { Link } from 'react-router'
+import { screenMeta as contextFormattingMeta } from './contextFormattingContent'
 
 const scenarios = [
   {
     to: '/bad-context-design',
     label: 'Bad context design',
+  },
+  {
+    to: contextFormattingMeta.path,
+    label: contextFormattingMeta.title,
   },
   {
     to: '/wrong-information-retrieved',

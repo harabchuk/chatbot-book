@@ -12,6 +12,9 @@ describe('App', () => {
       screen.getByRole('link', { name: /bad context design/i }),
     ).toHaveAttribute('href', '/bad-context-design')
     expect(
+      screen.getByRole('link', { name: /right numbers, wrong account/i }),
+    ).toHaveAttribute('href', '/context-formatting-account-ownership')
+    expect(
       screen.getByRole('link', { name: /wrong information retrieved/i }),
     ).toHaveAttribute('href', '/wrong-information-retrieved')
     expect(
@@ -19,3 +22,4 @@ describe('App', () => {
     ).toHaveAttribute('href', '/internal-information-leackage')
   })
 })
+
