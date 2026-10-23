@@ -46,7 +46,20 @@ Conventions:
   `features/chat`, `features/issues`).
 - Shared presentational pieces go in `components/`.
 - Pure helpers and storage adapters go in `lib/`.
-- Prefer co-located `*.test.ts(x)` next to the module under test.
+- Keep unit tests in a `tests/` subfolder next to the file under test, named
+  `*.spec.ts` / `*.spec.tsx` (not beside the source file):
+
+```text
+src/
+  components/
+    tests/
+      Component1.spec.tsx
+    Component1.tsx
+  lib/
+    tests/
+      storage.spec.ts
+    storage.ts
+```
 
 ## Scripts
 
@@ -68,7 +81,10 @@ npm run test:run # Vitest once (CI)
 - Cover pure logic in `lib/` and interactive feature pieces in `features/`.
 - Mock network/API failure scenarios in tests the same way the simulator
   models them in the UI — keep tests frontend-only; do not stand up a backend.
-- Run `npm run test:run` before opening a PR when behavior changes.
+- **Always add or update tests** for every new or changed source file under
+  `src/` (place them in that folder's `tests/` subfolder).
+- **Run `npm run test:run` after every task or bugfix** to confirm nothing
+  regressed; also run it before opening a PR when behavior changes.
 
 ## Out of scope (for now)
 
