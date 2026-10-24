@@ -114,7 +114,7 @@ export default function ChatWindow({
 
   return (
     <section
-      className={`flex h-[28rem] flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-sm shadow-amber-900/5 ${className}`}
+      className={`flex h-[28rem] flex-col overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-lg shadow-amber-900/15 ${className}`}
       aria-label="Chat"
     >
       {(conversationLabel || identityLabel) && (
