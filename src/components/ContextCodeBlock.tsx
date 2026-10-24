@@ -13,6 +13,8 @@ type ContextCodeBlockProps = {
   code: string
   highlights?: readonly CodeHighlight[]
   className?: string
+  /** Extra classes for the scrollable `<pre>`, e.g. a max height. */
+  preClassName?: string
 }
 
 const lineToneClass = {
@@ -33,6 +35,7 @@ export default function ContextCodeBlock({
   code,
   highlights = [],
   className = '',
+  preClassName = '',
 }: ContextCodeBlockProps) {
   const lines = code.split('\n')
   const highlightFor = (line: string) =>
@@ -45,7 +48,7 @@ export default function ContextCodeBlock({
         {label}
       </figcaption>
       <pre
-        className="mt-3 max-w-full overflow-x-auto rounded-xl bg-cream-100 font-mono text-[0.8rem] leading-relaxed text-stone-800 select-text"
+        className={`mt-3 max-w-full overflow-auto rounded-xl bg-cream-100 font-mono text-[0.8rem] leading-relaxed text-stone-800 select-text ${preClassName}`}
         tabIndex={0}
       >
         <code className="grid w-max min-w-full py-3">

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   balancesUsdCents,
   clearlyStructuredContext,
+  correctTranscript,
+  expectedResponse,
   poorlyFormattedContext,
   primaryTranscript,
   userQuestion,
@@ -12,6 +14,12 @@ describe('contextFormattingContent', () => {
     expect(primaryTranscript[0]?.content).toBe(userQuestion)
     expect(poorlyFormattedContext).toContain(userQuestion)
     expect(clearlyStructuredContext).toContain(userQuestion)
+  })
+
+  it('asks the same question in the wrong and correct transcripts', () => {
+    expect(correctTranscript[0]).toBe(primaryTranscript[0])
+    expect(correctTranscript[1]).toBe(expectedResponse)
+    expect(expectedResponse.annotation?.tone).toBe('correct')
   })
 
   it('derives household total from the two account balances', () => {

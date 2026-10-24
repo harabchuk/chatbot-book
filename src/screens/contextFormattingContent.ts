@@ -23,12 +23,14 @@ export const screenMeta = {
 export const userQuestion =
   'Hi, how much do I have available in my Rainy Day savings account?'
 
+const userMessage: ChatMessage = {
+  id: 'cf-user-1',
+  role: 'user',
+  content: userQuestion,
+}
+
 export const primaryTranscript: ChatMessage[] = [
-  {
-    id: 'cf-user-1',
-    role: 'user',
-    content: userQuestion,
-  },
+  userMessage,
   {
     id: 'cf-bot-incorrect',
     role: 'bot',
@@ -50,7 +52,15 @@ export const expectedResponse: ChatMessage = {
   },
 }
 
+export const correctTranscript: ChatMessage[] = [
+  userMessage,
+  expectedResponse,
+]
+
 export const conversationNote = `The amount is real, but it belongs to the household summary. Alex's account has ${formatUsdChat(balancesUsdCents.alex)} available.`
+
+export const correctConversationNote =
+  'Every account carries its own owner, and the household total is labeled as a summary, so the bot picks Alex’s account.'
 
 export const problemLabel =
   'Account ownership is buried in compact column headings'
@@ -134,10 +144,11 @@ export const improvementSteps: readonly ImprovementStep[] = [
   },
 ]
 
-export const workedExampleLabel = 'Worked example: the banking assistant'
-
 export const formatOptionsIntro =
-  'You can apply these steps with either of two formats. Both put the owner, a unique ID, and the scope on every record, so the model gets the same answer from each.'
+  'The Option A and Option B tabs above apply these steps with two different formats. Both put the owner, a unique ID, and the scope on every record, so the model gets the same answer from each.'
+
+export const wrongFormattingSummary =
+  'The context lists both “Rainy Day” accounts under one shared heading, then adds a household total labeled just “Available”.'
 
 export type FormatOption = {
   label: string
@@ -147,7 +158,7 @@ export type FormatOption = {
 export const textFormatOption: FormatOption = {
   label: 'Option A: Labeled text',
   bestFor:
-    'Best when context is build as plain text. Each record is a block of “field: value” lines.',
+    'Best when context is built as plain text. Each record is a block of “field: value” lines.',
 }
 
 export const jsonFormatOption: FormatOption = {

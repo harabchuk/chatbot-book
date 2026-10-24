@@ -1,9 +1,11 @@
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import ContextFormattingAccountOwnership from '../ContextFormattingAccountOwnership'
 import {
   balancesUsdCents,
   conversationNote,
+  correctConversationNote,
   poorlyFormattedContext,
   clearlyStructuredContext,
   explanationCopy,
@@ -16,64 +18,103 @@ import {
   otherDomainsIntro,
   solutionIntro,
   userQuestion,
-  workedExampleLabel,
+  wrongFormattingSummary,
 } from '../contextFormattingContent'
 import { formatUsdChat } from '../../lib/money'
 
+const incorrectAnswer = `You have ${formatUsdChat(balancesUsdCents.household)} available in your Rainy Day savings account.`
+const correctAnswer = `You have ${formatUsdChat(balancesUsdCents.alex)} available in your Rainy Day savings account.`
+
+const codeWithText = (text: string) =>
+  screen.getByText(
+    (_, element) => element?.tagName === 'CODE' && element.textContent === text,
+  )
+
 describe('ContextFormattingAccountOwnership', () => {
-  it('renders the three-part educational screen with the incorrect answer marked', () => {
+  it('opens on the wrong-formatting tab with the incorrect answer and its context', () => {
     render(<ContextFormattingAccountOwnership />)
 
     expect(
       screen.getByRole('heading', { name: /right numbers, wrong account/i }),
     ).toBeInTheDocument()
-    expect(screen.getByText(/context formatting/i)).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: /what the customer sees/i }),
-    ).toBeInTheDocument()
-    expect(screen.getByText(/illustrative conversation/i)).toBeInTheDocument()
-    expect(screen.getByText(/signed in as alex morgan/i)).toBeInTheDocument()
-    expect(within(screen.getByRole('log')).getByText(userQuestion)).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        `You have ${formatUsdChat(balancesUsdCents.household)} available in your Rainy Day savings account.`,
-      ),
-    ).toBeInTheDocument()
-    expect(screen.getByText('Incorrect account scope')).toBeInTheDocument()
-    expect(screen.getByText(conversationNote)).toBeInTheDocument()
-
-    expect(
-      screen.getByRole('heading', { name: /what went wrong/i }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(/account ownership is buried in compact column headings/i),
-    ).toBeInTheDocument()
-    expect(screen.getByText('Poorly formatted context')).toBeInTheDocument()
-    expect(
-      screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === poorlyFormattedContext),
-    ).toBeInTheDocument()
+    expect(screen.getByText(/^context formatting$/i)).toBeInTheDocument()
     expect(
       screen.getByRole('heading', {
-        name: /make ownership and scope explicit/i,
+        name: /compare the chat with the context behind it/i,
       }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Labeled text context')).toBeInTheDocument()
-    expect(screen.getByText('Expected response')).toBeInTheDocument()
+
+    const tabNames = within(
+      screen.getByRole('tablist', { name: /context versions/i }),
+    )
+      .getAllByRole('tab')
+      .map((tab) => tab.textContent)
+    expect(tabNames).toEqual(['Wrong formatting', 'Option A', 'Option B'])
     expect(
-      screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === clearlyStructuredContext),
+      screen.getByRole('tab', { name: 'Wrong formatting' }),
+    ).toHaveAttribute('aria-selected', 'true')
+
+    expect(screen.getByText(/illustrative conversation/i)).toBeInTheDocument()
+    expect(screen.getByText(/signed in as alex morgan/i)).toBeInTheDocument()
+    expect(
+      within(screen.getByRole('log')).getByText(userQuestion),
     ).toBeInTheDocument()
+    expect(screen.getByText(wrongFormattingSummary)).toBeInTheDocument()
+    expect(screen.getByText(incorrectAnswer)).toBeInTheDocument()
+    expect(screen.getByText('Incorrect account scope')).toBeInTheDocument()
+    expect(screen.getByText(conversationNote)).toBeInTheDocument()
+    expect(screen.getByText('Poorly formatted context')).toBeInTheDocument()
+    expect(codeWithText(poorlyFormattedContext)).toBeInTheDocument()
+  })
+
+  it('shows the correct answer and labeled text context on Option A', async () => {
+    const user = userEvent.setup()
+    render(<ContextFormattingAccountOwnership />)
+
+    await user.click(screen.getByRole('tab', { name: 'Option A' }))
+
+    expect(screen.getByText(textFormatOption.bestFor)).toBeInTheDocument()
+    expect(screen.getByText(correctAnswer)).toBeInTheDocument()
+    expect(screen.getByText('Correct account scope')).toBeInTheDocument()
+    expect(screen.getByText(correctConversationNote)).toBeInTheDocument()
+    expect(screen.getByText('Labeled text context')).toBeInTheDocument()
+    expect(codeWithText(clearlyStructuredContext)).toBeInTheDocument()
+    expect(screen.queryByText(incorrectAnswer)).not.toBeInTheDocument()
+  })
+
+  it('shows the correct answer and JSON context on Option B', async () => {
+    const user = userEvent.setup()
+    render(<ContextFormattingAccountOwnership />)
+
+    await user.click(screen.getByRole('tab', { name: 'Option B' }))
+
+    expect(screen.getByText(jsonFormatOption.bestFor)).toBeInTheDocument()
+    expect(screen.getByText(correctAnswer)).toBeInTheDocument()
+    expect(screen.getByText('JSON context')).toBeInTheDocument()
+    expect(codeWithText(jsonStructuredContext)).toBeInTheDocument()
+    expect(screen.queryByText('Poorly formatted context')).not.toBeInTheDocument()
+  })
+
+  it('places the explanation below the tabbed chat', () => {
+    render(<ContextFormattingAccountOwnership />)
+
+    const tablist = screen.getByRole('tablist')
+    const explanation = screen.getByRole('region', { name: /what went wrong/i })
     expect(
-      screen.getByText(
-        `You have ${formatUsdChat(balancesUsdCents.alex)} available in your Rainy Day savings account.`,
+      tablist.compareDocumentPosition(explanation) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      within(explanation).getByText(
+        /account ownership is buried in compact column headings/i,
       ),
     ).toBeInTheDocument()
-    expect(screen.getByText('Correct account scope')).toBeInTheDocument()
+    expect(within(explanation).getByText(explanationCopy)).toBeInTheDocument()
   })
 
   it('keeps the explanation brief', () => {
     render(<ContextFormattingAccountOwnership />)
 
-    expect(screen.getByText(explanationCopy)).toBeInTheDocument()
     expect(screen.getByText(solutionIntro)).toBeInTheDocument()
     expect(screen.queryByText(/takeaway:/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/implementation note:/i)).not.toBeInTheDocument()
@@ -92,9 +133,12 @@ describe('ContextFormattingAccountOwnership', () => {
     }
   })
 
-  it('lists domain-neutral improvement steps before the banking worked example', () => {
+  it('lists domain-neutral improvement steps and points to the option tabs', () => {
     render(<ContextFormattingAccountOwnership />)
 
+    expect(
+      screen.getByRole('heading', { name: /make ownership and scope explicit/i }),
+    ).toBeInTheDocument()
     const steps = within(
       screen.getByRole('list', { name: /improvement steps/i }),
     ).getAllByRole('listitem')
@@ -103,26 +147,7 @@ describe('ContextFormattingAccountOwnership', () => {
       expect(steps[index]).toHaveTextContent(step.title)
       expect(steps[index]).toHaveTextContent(step.detail)
     })
-
-    const workedExample = screen.getByRole('heading', { name: workedExampleLabel })
-    expect(
-      steps[steps.length - 1].compareDocumentPosition(workedExample) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy()
-  })
-
-  it('offers JSON as an alternative to the labeled text format', () => {
-    render(<ContextFormattingAccountOwnership />)
-
     expect(screen.getByText(formatOptionsIntro)).toBeInTheDocument()
-    for (const option of [textFormatOption, jsonFormatOption]) {
-      expect(screen.getByRole('heading', { name: option.label })).toBeInTheDocument()
-      expect(screen.getByText(option.bestFor)).toBeInTheDocument()
-    }
-    expect(screen.getByText('JSON context')).toBeInTheDocument()
-    expect(
-      screen.getByText((_, element) => element?.tagName === 'CODE' && element.textContent === jsonStructuredContext),
-    ).toBeInTheDocument()
   })
 
   it('embeds valid JSON with the same balances as the text option', () => {

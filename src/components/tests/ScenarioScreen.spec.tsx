@@ -63,5 +63,25 @@ describe('ScenarioScreen', () => {
     ).toBeInTheDocument()
     expect(screen.getByText(/label each account/i)).toBeInTheDocument()
   })
+
+  it('places the explanation below a full-width chat in stacked layout', () => {
+    render(
+      <ScenarioScreen
+        title="Example issue"
+        description="A short description."
+        chat={<div>Chat illustration</div>}
+        behindTheScenes="Explanation."
+        stepsToImprove="Steps."
+        layout="stacked"
+      />,
+    )
+
+    const grid = screen.getByText('Chat illustration').parentElement
+      ?.parentElement
+    expect(grid).not.toHaveClass('lg:grid-cols-2')
+    expect(
+      screen.getByRole('region', { name: /behind the scenes/i }),
+    ).toHaveClass('max-w-3xl')
+  })
 })
 

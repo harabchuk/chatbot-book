@@ -16,6 +16,11 @@ type ScenarioScreenProps = {
   /** Markdown or rich content describing how to improve or fix the issue. */
   stepsToImprove: string | ReactNode
   stepsToImproveTitle?: string
+  /**
+   * `split` puts the chat beside the explanation; `stacked` gives the chat
+   * the full width and moves the explanation below it.
+   */
+  layout?: 'split' | 'stacked'
 }
 
 function PanelContent({
@@ -59,7 +64,9 @@ export default function ScenarioScreen({
   behindTheScenesTitle = 'Behind the scenes',
   stepsToImprove,
   stepsToImproveTitle = 'Steps to improve',
+  layout = 'split',
 }: ScenarioScreenProps) {
+  const stacked = layout === 'stacked'
   return (
     <main className="min-h-screen bg-cream-50 text-stone-900">
       <div className="mx-auto max-w-6xl px-6 py-16">
@@ -75,8 +82,14 @@ export default function ScenarioScreen({
         </h1>
         <p className="mt-3 max-w-3xl text-lg text-stone-600">{description}</p>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-12">
-          <div className="flex min-h-0 flex-col gap-4 lg:sticky lg:top-6">
+        <div
+          className={`mt-12 grid gap-10 ${
+            stacked ? '' : 'lg:grid-cols-2 lg:items-start lg:gap-12'
+          }`}
+        >
+          <div
+            className={`flex min-h-0 flex-col gap-4 ${stacked ? '' : 'lg:sticky lg:top-6'}`}
+          >
             {chatTitle ? (
               <h2 className="text-xl font-semibold tracking-tight text-stone-900">
                 {chatTitle}
@@ -84,7 +97,11 @@ export default function ScenarioScreen({
             ) : null}
             {chat}
           </div>
-          <PanelContent title={behindTheScenesTitle} content={behindTheScenes} />
+          <PanelContent
+            title={behindTheScenesTitle}
+            content={behindTheScenes}
+            className={stacked ? 'max-w-3xl' : undefined}
+          />
         </div>
 
         <PanelContent

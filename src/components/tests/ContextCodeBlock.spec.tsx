@@ -18,6 +18,21 @@ describe('ContextCodeBlock', () => {
     )
   })
 
+  it('applies extra classes to the scrollable block', () => {
+    render(
+      <ContextCodeBlock
+        label="JSON context"
+        code="{}"
+        preClassName="lg:max-h-[26rem]"
+      />,
+    )
+
+    expect(screen.getByText('{}').closest('pre')).toHaveClass(
+      'lg:max-h-[26rem]',
+      'overflow-auto',
+    )
+  })
+
   it('marks highlighted lines without changing the code text', () => {
     const code = 'Selected account: Rainy Day\nAvailable: USD 10,950.00\nAnswer directly.'
     const { container } = render(

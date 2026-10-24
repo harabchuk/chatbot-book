@@ -1,10 +1,10 @@
-import ChatWindow, { MessageBubble } from '../components/ChatWindow'
-import ContextCodeBlock from '../components/ContextCodeBlock'
+import ChatContextTabs, { type ChatContextTab } from '../components/ChatContextTabs'
 import ScenarioScreen from '../components/ScenarioScreen'
 import {
   clearlyStructuredContext,
   conversationNote,
-  expectedResponse,
+  correctConversationNote,
+  correctTranscript,
   explanationCopy,
   formatOptionsIntro,
   improvementSteps,
@@ -18,9 +18,48 @@ import {
   screenMeta,
   solutionIntro,
   textFormatOption,
-  workedExampleLabel,
+  wrongFormattingSummary,
   type FormatOption,
 } from './contextFormattingContent'
+
+function FormatOptionDescription({ option }: { option: FormatOption }) {
+  return (
+    <p>
+      <span className="font-semibold text-stone-900">{option.label}.</span>{' '}
+      {option.bestFor}
+    </p>
+  )
+}
+
+const contextTabs: readonly ChatContextTab[] = [
+  {
+    id: 'wrong',
+    label: 'Wrong formatting',
+    description: <p>{wrongFormattingSummary}</p>,
+    messages: primaryTranscript,
+    note: <p>{conversationNote}</p>,
+    contextLabel: 'Poorly formatted context',
+    context: poorlyFormattedContext,
+  },
+  {
+    id: 'option-a',
+    label: 'Option A',
+    description: <FormatOptionDescription option={textFormatOption} />,
+    messages: correctTranscript,
+    note: <p>{correctConversationNote}</p>,
+    contextLabel: 'Labeled text context',
+    context: clearlyStructuredContext,
+  },
+  {
+    id: 'option-b',
+    label: 'Option B',
+    description: <FormatOptionDescription option={jsonFormatOption} />,
+    messages: correctTranscript,
+    note: <p>{correctConversationNote}</p>,
+    contextLabel: 'JSON context',
+    context: jsonStructuredContext,
+  },
+]
 
 function ExplanationPanel() {
   return (
@@ -29,10 +68,6 @@ function ExplanationPanel() {
         <p className="font-semibold text-stone-900">{problemLabel}</p>
         <p className="mt-1">{explanationCopy}</p>
       </div>
-      <ContextCodeBlock
-        label="Poorly formatted context"
-        code={poorlyFormattedContext}
-      />
       <div>
         <h3 className="font-semibold text-stone-900">
           The same trap in other chatbots
@@ -53,66 +88,23 @@ function ExplanationPanel() {
   )
 }
 
-function FormatOptionColumn({
-  option,
-  codeLabel,
-  code,
-}: {
-  option: FormatOption
-  codeLabel: string
-  code: string
-}) {
-  return (
-    <div className="min-w-0">
-      <h4 className="font-semibold text-amber-800">{option.label}</h4>
-      <p className="mt-1">{option.bestFor}</p>
-      <ContextCodeBlock label={codeLabel} code={code} className="mt-4 block" />
-    </div>
-  )
-}
-
 function SolutionPanel() {
   return (
-    <div className="space-y-10">
-      <div className="max-w-3xl">
-        <p>{solutionIntro}</p>
-        <ol
-          aria-label="Improvement steps"
-          className="mt-4 list-decimal space-y-3 pl-5 marker:font-semibold marker:text-amber-600">
-          {improvementSteps.map((step) => (
-            <li key={step.title}>
-              <span className="font-semibold text-stone-900">
-                {step.title}.
-              </span>{' '}
-              {step.detail}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        <h3 className="font-semibold text-stone-900">{workedExampleLabel}</h3>
-        <p className="mt-1 max-w-3xl">{formatOptionsIntro}</p>
-        <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-12">
-          <FormatOptionColumn
-            option={textFormatOption}
-            codeLabel="Labeled text context"
-            code={clearlyStructuredContext}
-          />
-          <FormatOptionColumn
-            option={jsonFormatOption}
-            codeLabel="JSON context"
-            code={jsonStructuredContext}
-          />
-        </div>
-        <figure className="mt-10 max-w-xl">
-          <figcaption className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-            Expected response
-          </figcaption>
-          <div className="mt-3">
-            <MessageBubble message={expectedResponse} />
-          </div>
-        </figure>
-      </div>
+    <div className="max-w-3xl">
+      <p>{solutionIntro}</p>
+      <ol
+        aria-label="Improvement steps"
+        className="mt-4 list-decimal space-y-3 pl-5 marker:font-semibold marker:text-amber-600">
+        {improvementSteps.map((step) => (
+          <li key={step.title}>
+            <span className="font-semibold text-stone-900">
+              {step.title}.
+            </span>{' '}
+            {step.detail}
+          </li>
+        ))}
+      </ol>
+      <p className="mt-6">{formatOptionsIntro}</p>
     </div>
   )
 }
@@ -123,13 +115,14 @@ export default function ContextFormattingAccountOwnership() {
       category={screenMeta.category}
       title={screenMeta.title}
       description={screenMeta.description}
-      chatTitle="What the customer sees"
+      layout="stacked"
+      chatTitle="Compare the chat with the context behind it"
       chat={
-        <ChatWindow
-          messages={primaryTranscript}
+        <ChatContextTabs
+          tabs={contextTabs}
+          aria-label="Context versions"
           conversationLabel="Illustrative conversation"
           identityLabel="Signed in as Alex Morgan"
-          footer={<p>{conversationNote}</p>}
         />
       }
       behindTheScenesTitle="What went wrong"
