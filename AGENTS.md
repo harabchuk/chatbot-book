@@ -16,14 +16,14 @@ persist stays in the browser (`localStorage` or IndexedDB).
 | Build / dev server | [Vite](https://vite.dev/) |
 | UI | React 19 + TypeScript |
 | Styling | Tailwind CSS v4 via `@tailwindcss/vite` |
-| Routing | Add `react-router` only when multiple URLs are needed |
+| Routing | [react-router](https://reactrouter.com/) (`BrowserRouter` in `app/App.tsx`) |
 | Persistence | `localStorage` first; IndexedDB if data grows |
 | Unit tests | Vitest + Testing Library + jsdom |
 | Lint | Oxlint (template default) |
 
-Static output from `npm run build` can be hosted on any static host. If you
-later use browser-history routes, configure the host to serve `index.html`
-for unknown paths.
+Static output from `npm run build` can be hosted on any static host. Because
+routes use browser history, configure the host to serve `index.html` for
+unknown paths.
 
 ## Project structure
 
@@ -31,9 +31,9 @@ Keep the layout small until features justify more folders:
 
 ```text
 src/
-  app/           App.tsx and app-wide setup
-  components/    reusable UI
-  features/      screens and feature-specific code
+  app/           App.tsx, routing, and app-wide setup
+  components/    reusable UI (chat window, scenario shell, markdown, etc.)
+  screens/       route-level pages and scenario-specific content
   lib/           browser storage and shared helpers
   test/          Vitest setup
   index.css      Tailwind entry (`@import "tailwindcss";`)
@@ -42,10 +42,11 @@ src/
 
 Conventions:
 
-- Put chatbot simulation UI and issue scenarios under `features/` (e.g.
-  `features/chat`, `features/issues`).
+- Put each chatbot issue scenario under `screens/` (one screen component per
+  route, plus any content helpers that belong only to that scenario).
 - Shared presentational pieces go in `components/`.
 - Pure helpers and storage adapters go in `lib/`.
+- Wire routes in `app/App.tsx` with `react-router`.
 - Keep unit tests in a `tests/` subfolder next to the file under test, named
   `*.spec.ts` / `*.spec.tsx` (not beside the source file):
 
@@ -55,6 +56,10 @@ src/
     tests/
       Component1.spec.tsx
     Component1.tsx
+  screens/
+    tests/
+      ScenarioScreen.spec.tsx
+    ScenarioScreen.tsx
   lib/
     tests/
       storage.spec.ts
@@ -78,7 +83,8 @@ npm run test:run # Vitest once (CI)
 - Setup: `src/test/setup.ts` loads `@testing-library/jest-dom/vitest`.
 - Prefer Testing Library queries that reflect user behavior
   (`getByRole`, `getByLabelText`) over implementation details.
-- Cover pure logic in `lib/` and interactive feature pieces in `features/`.
+- Cover pure logic in `lib/` and interactive screen pieces in `screens/` /
+  `components/`.
 - Mock network/API failure scenarios in tests the same way the simulator
   models them in the UI — keep tests frontend-only; do not stand up a backend.
 - **Always add or update tests** for every new or changed source file under
@@ -89,5 +95,4 @@ npm run test:run # Vitest once (CI)
 ## Out of scope (for now)
 
 - Application servers, databases, or auth backends
-- React Router until multiple routes are required
 - Heavy state libraries — start with React state and `lib/storage`
