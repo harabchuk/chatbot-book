@@ -1,6 +1,6 @@
-# Chatbot Issues Simulator
+# Chatbot Done Right - The Interactive Book
 
-Frontend-only React app that simulates chatbot conversations and common failure modes (lack of context, wrong retrieval, API failures, and similar).
+Interactive book about chatbot common failure modes (lack of context, wrong retrieval, API failures, and similar).
 
 ## Setup
 

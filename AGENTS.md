@@ -4,9 +4,8 @@ Guidance for humans and coding agents working in this repository.
 
 ## Purpose
 
-Frontend-only simulator that demonstrates chatbot failure modes users may hit
-in conversation — for example lack of context, wrong information retrieval,
-and API failures. There is no application backend; anything that needs to
+Frontend-only interactive book and simulator that demonstrates chatbot failure modes users may hit in conversation — for example lack of context, wrong information retrieval, and API failures. 
+There is no application backend; anything that needs to
 persist stays in the browser (`localStorage` or IndexedDB).
 
 ## Tech stack
